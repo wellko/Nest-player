@@ -12,17 +12,17 @@ import {
 import { InjectModel } from '@nestjs/mongoose';
 import { Album, AlbumDocument } from './album.schema';
 import { Model } from 'mongoose';
-import { Artist, ArtistDocument } from '../artists/artist.schema';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { CreateAlbumDto } from './create-album.dto';
+import { Track, TrackDocument } from '../tracks/track.schema';
 
 @Controller('albums')
 export class AlbumsController {
   constructor(
     @InjectModel(Album.name)
     private albumModel: Model<AlbumDocument>,
-    @InjectModel(Artist.name)
-    private artistModel: Model<ArtistDocument>,
+    @InjectModel(Track.name)
+    private trackModel: Model<TrackDocument>,
   ) {}
 
   @Get()
@@ -56,7 +56,8 @@ export class AlbumsController {
   }
 
   @Delete(':id')
-  deleteAlbum(@Param('id') id: string) {
+  async deleteAlbum(@Param('id') id: string) {
+    await this.trackModel.deleteMany({ album: id });
     return this.albumModel.deleteOne({ _id: id });
   }
 }
