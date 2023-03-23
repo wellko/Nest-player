@@ -22,7 +22,7 @@ export class ArtistsController {
   ) {}
 
   @Get()
-  async getAllArtists() {
+  getAllArtists() {
     return this.artistModel.find();
   }
 
