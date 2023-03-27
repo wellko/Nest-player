@@ -1,15 +1,17 @@
-import { Controller, Post, Req, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { User, UserDocument } from './user.schema';
 import { Model } from 'mongoose';
 import { Request } from 'express';
 import { AuthGuard } from '@nestjs/passport';
+import { TokenAuthGuard } from '../auth/token-auth.guard';
 
 @Controller('users')
 export class UsersController {
   constructor(
     @InjectModel(User.name) private readonly userModel: Model<UserDocument>,
   ) {}
+
   @Post()
   registerUser(@Req() req: Request) {
     const user = new this.userModel({
@@ -25,5 +27,13 @@ export class UsersController {
   @UseGuards(AuthGuard('local'))
   login(@Req() req: Request) {
     return req.user as UserDocument;
+  }
+
+  @UseGuards(TokenAuthGuard)
+  @Get('logout')
+  logOutUser(@Req() req: Request) {
+    const user = req.user as UserDocument;
+    user.generateToken();
+    return user.save();
   }
 }
