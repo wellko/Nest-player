@@ -1,8 +1,9 @@
-import { Controller, Post, Req } from '@nestjs/common';
+import { Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { User, UserDocument } from './user.schema';
 import { Model } from 'mongoose';
 import { Request } from 'express';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('users')
 export class UsersController {
@@ -18,5 +19,11 @@ export class UsersController {
     });
     user.generateToken();
     return user.save();
+  }
+
+  @Post('sessions')
+  @UseGuards(AuthGuard('local'))
+  login(@Req() req: Request) {
+    return req.user as UserDocument;
   }
 }
