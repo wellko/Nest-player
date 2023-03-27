@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
+import { Controller, Delete, Post, Req, UseGuards } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { User, UserDocument } from './user.schema';
 import { Model } from 'mongoose';
@@ -30,7 +30,7 @@ export class UsersController {
   }
 
   @UseGuards(TokenAuthGuard)
-  @Get('logout')
+  @Delete('sessions')
   logOutUser(@Req() req: Request) {
     const user = req.user as UserDocument;
     user.generateToken();
